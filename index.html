@@ -180,33 +180,34 @@
       display: block;
     }
 
-    .brand-title-wrap {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 0.35rem;
-    }
-
     .brand-title {
       font-family: 'Playfair Display', 'Tajawal', serif;
-      font-size: 1.85rem;
+      font-size: 1.95rem;
       font-weight: 900;
       color: var(--primary);
       letter-spacing: 0.04em;
       line-height: 1.2;
+      margin-bottom: 0.35rem;
+      display: block;
+      text-align: center;
+    }
+
+    .brand-badge-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0.55rem;
     }
 
     .brand-badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.35rem;
       background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(45, 106, 79, 0.12) 100%);
       color: var(--primary);
-      padding: 0.3rem 0.85rem;
+      padding: 0.35rem 0.95rem;
       border-radius: 9999px;
-      font-size: 0.84rem;
+      font-size: 0.85rem;
       font-weight: 800;
       border: 1px solid rgba(16, 185, 129, 0.3);
     }
@@ -290,8 +291,8 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.35rem;
-      padding: 0.4rem 1rem;
+      gap: 0.4rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 9999px;
       font-size: 0.88rem;
       font-weight: 800;
@@ -300,11 +301,13 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
       transition: all 0.3s ease;
       min-height: 2.2rem;
-      max-width: 95%;
+      max-width: 100%;
       box-sizing: border-box;
-      line-height: 1.4;
+      line-height: 1.5;
       text-align: center;
-      word-break: break-word;
+      word-break: normal;
+      overflow-wrap: normal;
+      white-space: normal;
     }
 
     /* Smart Routing Cards */
@@ -593,15 +596,15 @@
     }
 
     .reward-gold-box {
-      background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
-      border: 2px dashed #F59E0B;
+      background: linear-gradient(135deg, #FFFDF7 0%, #FEF9EE 45%, #FEF3C7 100%);
+      border: 1.5px dashed #D97706;
       padding: 1.25rem 1rem;
       border-radius: 18px;
       margin-bottom: 1.5rem;
-      color: #92400E;
+      color: #78350F;
       font-size: 0.95rem;
       line-height: 1.6;
-      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.15);
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.08);
     }
 
     .footer {
@@ -632,8 +635,8 @@
         />
       </div>
 
-      <div class="brand-title-wrap">
-        <h1 class="brand-title">PlantN</h1>
+      <h1 class="brand-title">Plant N</h1>
+      <div class="brand-badge-wrap">
         <span class="brand-badge">معرض ونباتات زينة 🌿</span>
       </div>
       <p class="subtitle">
@@ -653,7 +656,7 @@
       </div>
       <div>
         <div class="rating-badge-feedback" id="ratingDesc">
-          <span>🌟</span> <span>اضغط على النجوم لتحديد تقييمك</span>
+          اضغط على النجوم لتحديد تقييمك ⭐
         </div>
       </div>
     </div>
@@ -788,7 +791,7 @@
     const storedConfig = JSON.parse(localStorage.getItem("plantn_review_config") || "{}");
 
     // الرابط الافتراضي لتطبيق Google Apps Script Web App الخاص بالمعرض
-    const DEFAULT_SHEETS_URL = "https://script.google.com/macros/s/AKfycbx39wXfPYmBzyZFF6jlCbL_D4Qz-fH7F7fmoXuMijheESyBGRbnT-9B0Fskcv2-PlwyrA/exec";
+    const DEFAULT_SHEETS_URL = "";
 
     const querySheets = urlParams.get("sheets");
     if (querySheets) {
@@ -857,7 +860,7 @@
       });
 
       const info = ratingDetails[currentRating];
-      ratingDesc.innerHTML = '<span>' + info.text.split(" ")[0] + '</span> <span>' + info.text.substring(info.text.indexOf(" ") + 1) + '</span>';
+      ratingDesc.textContent = info.text;
       ratingDesc.style.color = info.color;
       ratingDesc.style.background = info.bg;
       ratingDesc.style.borderColor = info.color + "40";
@@ -913,17 +916,24 @@
 
       let submittedSuccessfully = false;
 
-      // 1. الإرسال إلى Google Sheets Web App (مباشر وسحابي ومجاني بدون مشاكل CORS)
+      // 1. الإرسال إلى Google Sheets Web App (مباشر وسحابي ومفعل له keepalive لضمان الإرسال بالخلفية بدون انتظار طويل)
       if (CONFIG.sheetsUrl) {
         try {
-          await fetch(CONFIG.sheetsUrl, {
+          const sheetsPromise = fetch(CONFIG.sheetsUrl, {
             method: "POST",
             mode: "no-cors",
+            keepalive: true,
             headers: {
               "Content-Type": "text/plain;charset=utf-8"
             },
             body: JSON.stringify(payload)
           });
+
+          // ننتظر 500ms كحد أقصى لانطلاق الطلب بسلاسة دون تأخير تجربة العميل على الهاتف
+          await Promise.race([
+            sheetsPromise,
+            new Promise(resolve => setTimeout(resolve, 500))
+          ]);
           submittedSuccessfully = true;
         } catch (sheetsErr) {
           console.error("Google Sheets submission error:", sheetsErr);
