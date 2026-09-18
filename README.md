@@ -1,16 +1,19 @@
-## Hi there 👋
+# موقع تقييمات عملاء مشتل PlantN 🌿
+منصة تقييمات العملاء الإلكترونية وحارس السمعة الذكي (Smart Reputation Guard).
 
-<!--
-**PlantN-review/plantn-review** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+## 🌟 المميزات
+1. **تصميم متوافق مع الهوية البصرية لـ PlantN**: الألوان الخضراء الطبيعية، الخطوط العربية الأنيقة، وشعار المشتل.
+2. **حارس السمعة الذكي (Reputation Guard)**:
+   - **4 إلى 5 نجوم**: احتفال وتوجيه مباشر لتقييم المشتل على **Google Maps** لرفع التقييم العام للمتجر وجذب زبائن جدد.
+   - **1 إلى 3 نجوم**: تحويل التقييم داخلياً كشكوى أو مقترح تحسين مع اعتذار لطيف للعميل، ليتم حلها وإرضاؤه فوراً من قبل الإدارة بدون نشرها سلباً على العلن.
+3. **تكامل مع GitHub Issues API**:
+   - يتم إرسال التقييمات كـ GitHub Issues بوسم `customer-review`.
+   - يمكن لمنظومة PlantN المحلية سحب ومزامنة كل التقييمات بنقرة زر واحدة من شاشة "آراء العملاء".
 
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+## 🚀 طريقة الرفع على GitHub Pages خلال دقيقة واحدة:
+1. أنشئ مستودعاً جديداً على GitHub (مثلاً: `plantn-reviews`).
+2. ارفع ملف `index.html` الموجود داخل هذا المجلد إلى المستودع.
+3. ادخل إلى **Settings** > **Pages** داخل المستودع.
+4. من **Branch**، اختر `main` واضغط **Save**.
+5. سيصبح رابط موقعك متاحاً فوراً: `https://[username].github.io/plantn-reviews/`.
+6. قم بنسخ الرابط وضعه في إعدادات منظومة PlantN > آراء العملاء.

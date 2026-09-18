@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تقييم تجربة العميل | PlantN 🌿</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary: #2C4A3B;
+      --primary-hover: #1E3429;
+      --primary-light: #E8F1EA;
+      --accent: #C77B4C;
+      --accent-hover: #AA653B;
+      --gold: #F59E0B;
+      --bg: #F4F8F4;
+      --card-bg: #FFFFFF;
+      --text: #1F2F26;
+      --text-muted: #5A6B5E;
+      --border: #D3DFD7;
+      --rose: #E11D48;
+      --rose-light: #FFE4E6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(44, 74, 59, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(199, 123, 76, 0.05) 0%, transparent 40%);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 10px 30px -5px rgba(44, 74, 59, 0.08), 0 4px 12px -2px rgba(44, 74, 59, 0.04);
+      padding: 2.25rem 2rem;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: var(--primary);
+      margin-bottom: 1rem;
+      box-shadow: 0 8px 20px -4px rgba(44, 74, 59, 0.25);
+    }
+
+    .logo-container svg {
+      width: 44px;
+      height: 44px;
+      fill: #FFFFFF;
+    }
+
+    .title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Star Rating */
+    .rating-section {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .rating-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.75rem;
+      display: block;
+    }
+
+    .stars-group {
+      display: inline-flex;
+      flex-direction: row-reverse;
+      gap: 0.5rem;
+    }
+
+    .star-btn {
+      background: none;
+      border: none;
+      font-size: 2.75rem;
+      color: #E2E8F0;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      line-height: 1;
+      padding: 0 0.15rem;
+      outline: none;
+    }
+
+    .star-btn:hover,
+    .star-btn:hover ~ .star-btn,
+    .star-btn.active,
+    .star-btn.active ~ .star-btn {
+      color: var(--gold);
+      transform: scale(1.15);
+      text-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+    }
+
+    .rating-feedback-text {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      min-height: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    /* Routing Banners */
+    .route-banner {
+      padding: 1.25rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      display: none;
+      animation: fadeInDown 0.4s ease;
+      text-align: center;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .route-banner.positive {
+      background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+      border: 1px solid #A7F3D0;
+      color: #065F46;
+    }
+
+    .route-banner.negative {
+      background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
+      border: 1px solid #FECDD3;
+      color: #9F1239;
+    }
+
+    .route-banner h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+    }
+
+    .route-banner p {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .btn-maps {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: #4285F4;
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.92rem;
+      box-shadow: 0 4px 12px rgba(66, 133, 244, 0.3);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-maps:hover {
+      background: #3367D6;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(66, 133, 244, 0.4);
+    }
+
+    /* Form Fields */
+    .form-group {
+      margin-bottom: 1.15rem;
+      text-align: right;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-label span.req {
+      color: var(--rose);
+      margin-right: 0.2rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-family: inherit;
+      font-size: 0.92rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text);
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(44, 74, 59, 0.12);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.85rem 1.5rem;
+      background: var(--primary);
+      color: #FFFFFF;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(44, 74, 59, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.25rem;
+    }
+
+    .btn-submit:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(44, 74, 59, 0.35);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Success Screen */
+    .success-screen {
+      display: none;
+      text-align: center;
+      padding: 1.5rem 0.5rem;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .success-icon {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background: #D1FAE5;
+      color: #059669;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .success-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .success-desc {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .reward-box {
+      background: #FEF3C7;
+      border: 1px dashed #F59E0B;
+      padding: 1rem;
+      border-radius: 14px;
+      margin-bottom: 1.5rem;
+      color: #92400E;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 1.75rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .config-trigger {
+      display: block;
+      margin-top: 0.75rem;
+      color: #94A3B8;
+      text-decoration: none;
+      font-size: 0.75rem;
+      cursor: pointer;
+    }
+
+    /* Config Modal */
+    .config-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .config-box {
+      background: #FFFFFF;
+      padding: 1.5rem;
+      border-radius: 18px;
+      max-width: 440px;
+      width: 100%;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container" id="mainContainer">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-container">
+        <!-- PlantN Icon SVG -->
+        <svg viewBox="0 0 30 30">
+          <path d="M24.51,28.51H5.49c-2.21,0-4-1.79-4-4V5.49c0-2.21,1.79-4,4-4h19.03c2.21,0,4,1.79,4,4v19.03 C28.51,26.72,26.72,28.51,24.51,28.51z"/>
+          <path fill="#2C4A3B" d="M15.47,7.1l-1.3,1.85c-0.2,0.29-0.54,0.47-0.9,0.47h-7.1V7.09C6.16,7.1,15.47,7.1,15.47,7.1z"/>
+          <polygon fill="#2C4A3B" points="24.3,7.1 13.14,22.91 5.7,22.91 16.86,7.1"/>
+          <path fill="#2C4A3B" d="M14.53,22.91l1.31-1.86c0.2-0.29,0.54-0.47,0.9-0.47h7.09v2.33H14.53z"/>
+        </svg>
+      </div>
+      <h1 class="title">PlantN — مشتل ونباتات زينة 🌿</h1>
+      <p class="subtitle">رأيك يصنع الفرق! شاركنا تقييمك لمساعدتنا على تقديم أفضل تجربة ممكنة.</p>
+    </div>
+
+    <!-- Rating Section (حارس السمعة الذكي) -->
+    <div class="rating-section">
+      <span class="rating-label">كيف تقيّم تجربتك معنا اليوم؟</span>
+      <div class="stars-group" id="starsGroup">
+        <button type="button" class="star-btn" data-rating="5" title="5 نجوم">★</button>
+        <button type="button" class="star-btn" data-rating="4" title="4 نجوم">★</button>
+        <button type="button" class="star-btn" data-rating="3" title="3 نجوم">★</button>
+        <button type="button" class="star-btn" data-rating="2" title="نجمتان">★</button>
+        <button type="button" class="star-btn" data-rating="1" title="نجمة واحدة">★</button>
+      </div>
+      <div class="rating-feedback-text" id="ratingDesc">اضغط على النجوم لتحديد تقييمك ⭐</div>
+    </div>
+
+    <!-- Positive Route Banner (4 - 5 Stars) -->
+    <div class="route-banner positive" id="positiveBanner">
+      <h4>سعداء جداً بثقتك وإعجابك! 🌟🎉</h4>
+      <p>دعمك يعني لنا الكثير! نرجو منك التكرم بمشاركة هذا التقييم الرائع على خرائط Google لمساعدة عشاق النباتات الآخرين في العثور علينا.</p>
+      <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="btn-maps" id="mapsLink">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+        نشر التقييم على Google Maps
+      </a>
+    </div>
+
+    <!-- Negative Route Banner (1 - 3 Stars) -->
+    <div class="route-banner negative" id="negativeBanner">
+      <h4>نعتذر بشدة إن لم نكن عند حسن ظنك! 💔🌿</h4>
+      <p>رضاك هو أولويتنا القصوى. نرجو منك إخبارنا بما حدث، وستقوم إدارة المتجر بمراجعة شكواك والتواصل معك فوراً لتعويضك وحل المشكلة.</p>
+    </div>
+
+    <!-- Review Form -->
+    <form id="reviewForm" onsubmit="handleSubmit(event)">
+      <div class="form-group">
+        <label class="form-label" for="customerName">
+          الاسم الكريم <span class="req">*</span>
+        </label>
+        <input type="text" id="customerName" class="form-control" placeholder="اكتب اسمك هنا..." required />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="customerPhone">
+          رقم الجوال (واتساب) <span class="req">*</span>
+        </label>
+        <input type="tel" id="customerPhone" class="form-control" placeholder="01xxxxxxxxx" required dir="ltr" />
+        <small style="font-size: 0.76rem; color: var(--text-muted); display: block; margin-top: 0.25rem;">
+          سنرسل لك كود خصم خاص أو نقاط ولاء عبر الواتساب تقديراً لوقتك 🎁
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="invoiceNumber">
+          رقم الفاتورة (اختياري)
+        </label>
+        <input type="text" id="invoiceNumber" class="form-control" placeholder="مثال: INV-1002" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="comment" id="commentLabel">
+          رأيك أو ملاحظاتك
+        </label>
+        <textarea id="comment" class="form-control" placeholder="أخبرنا عن تجربتك، المنتجات التي أعجبتك أو أي ملاحظات للتحسين..."></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span>إرسال التقييم</span>
+        <span>🌿</span>
+      </button>
+    </form>
+
+    <!-- Success Screen -->
+    <div class="success-screen" id="successScreen">
+      <div class="success-icon">✓</div>
+      <h2 class="success-title">شكراً جزيلاً لك! 🌿</h2>
+      <p class="success-desc">تم استلام تقييمك بنجاح. نقدر وقتك واهتمامك بمساعدتنا على التطور والارتقاء بخدماتنا دائماً.</p>
+      <div class="reward-box">
+        🎁 <b>مكافأة تقديرية:</b> سنقوم بمراجعة تقييمك وإرسال هدية كود خصم أو نقاط ولاء على رقم الواتساب المسجل قريباً جداً!
+      </div>
+      <button type="button" class="btn-submit" onclick="location.reload()">
+        تقييم جديد
+      </button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <span>PlantN System &bull; جميع الحقوق محفوظة © 2026</span>
+      <a class="config-trigger" onclick="openConfigModal()">⚙️ إعدادات المستودع (للمدير)</a>
+    </div>
+  </div>
+
+  <!-- Config Modal (لتهيئة مستودع GitHub والروابط) -->
+  <div class="config-modal" id="configModal">
+    <div class="config-box">
+      <h3 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 0.5rem; font-weight: 800;">إعدادات الموقع المتقدمة ⚙️</h3>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem;">
+        يتم حفظ هذه الإعدادات في متصفحك وذاكرة الموقع لتوجيه الـ Issues وروابط الخرائط.
+      </p>
+
+      <div class="form-group">
+        <label class="form-label">مستودع GitHub (owner/repo):</label>
+        <input type="text" id="cfgRepo" class="form-control" placeholder="مثال: plantn/plantn-system" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">GitHub Token (صلاحية issues:write فقط):</label>
+        <input type="password" id="cfgToken" class="form-control" placeholder="ghp_xxxxxxxxxxxx" />
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">رابط Google Maps لتقييم المتجر:</label>
+        <input type="url" id="cfgMapsUrl" class="form-control" placeholder="https://g.page/r/.../review" />
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+        <button type="button" class="btn-submit" style="margin: 0; flex: 1;" onclick="saveConfig()">حفظ الإعدادات</button>
+        <button type="button" class="btn-submit" style="margin: 0; background: #94A3B8; flex: 1;" onclick="closeConfigModal()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State
+    let currentRating = 5;
+    const ratingLabels = {
+      5: { text: "تجربة استثنائية وممتازة! 🌟🌟🌟🌟🌟", color: "#059669" },
+      4: { text: "تجربة رائعة جداً 🌿🌟🌟🌟🌟", color: "#10B981" },
+      3: { text: "تجربة مقبولة ولدي بعض الملاحظات 💬", color: "#D97706" },
+      2: { text: "تجربة دون المتوقع ⚠️", color: "#DC2626" },
+      1: { text: "تجربة غير مرضية بتاتاً ❌", color: "#991B1B" },
+    };
+
+    // Default configuration (saved in localStorage or overridden via URL params)
+    const urlParams = new URLSearchParams(window.location.search);
+    const storedConfig = JSON.parse(localStorage.getItem("plantn_review_config") || "{}");
+
+    const CONFIG = {
+      repo: urlParams.get("repo") || storedConfig.repo || "",
+      token: urlParams.get("token") || storedConfig.token || "",
+      mapsUrl: urlParams.get("maps") || storedConfig.mapsUrl || "https://maps.google.com",
+    };
+
+    // Prefill invoice or phone if in query params
+    if (urlParams.get("inv")) {
+      document.getElementById("invoiceNumber").value = urlParams.get("inv");
+    }
+    if (urlParams.get("phone")) {
+      document.getElementById("customerPhone").value = urlParams.get("phone");
+    }
+    if (urlParams.get("name")) {
+      document.getElementById("customerName").value = urlParams.get("name");
+    }
+
+    // Elements
+    const starButtons = document.querySelectorAll(".star-btn");
+    const ratingDesc = document.getElementById("ratingDesc");
+    const positiveBanner = document.getElementById("positiveBanner");
+    const negativeBanner = document.getElementById("negativeBanner");
+    const mapsLink = document.getElementById("mapsLink");
+    const commentLabel = document.getElementById("commentLabel");
+
+    if (CONFIG.mapsUrl) {
+      mapsLink.href = CONFIG.mapsUrl;
+    }
+
+    // Set Rating Function
+    function setRating(r) {
+      currentRating = parseInt(r);
+
+      // Update stars UI
+      starButtons.forEach(btn => {
+        const btnRating = parseInt(btn.getAttribute("data-rating"));
+        if (btnRating <= currentRating) {
+          btn.classList.add("active");
+        } else {
+          btn.classList.remove("active");
+        }
+      });
+
+      // Update description text
+      const info = ratingLabels[currentRating];
+      ratingDesc.innerText = info.text;
+      ratingDesc.style.color = info.color;
+
+      // Smart Reputation Guard (حارس السمعة)
+      if (currentRating >= 4) {
+        positiveBanner.style.display = "block";
+        negativeBanner.style.display = "none";
+        commentLabel.innerText = "ما أكثر شيء أسعدك في زيارتك لنا؟ (اختياري)";
+
+        // Confetti effect
+        if (typeof confetti === "function") {
+          confetti({
+            particleCount: 50,
+            spread: 60,
+            origin: { y: 0.6 }
+          });
+        }
+      } else {
+        positiveBanner.style.display = "none";
+        negativeBanner.style.display = "block";
+        commentLabel.innerText = "ما الذي أزعجك أو ترغب في تحسينه؟ (مهم جداً لنا)";
+      }
+    }
+
+    // Star Click Listeners
+    starButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        setRating(btn.getAttribute("data-rating"));
+      });
+    });
+
+    // Initialize with 5 stars
+    setRating(5);
+
+    // Form Submission
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = `<span>جارٍ الإرسال...</span>`;
+
+      const customerName = document.getElementById("customerName").value.trim();
+      const customerPhone = document.getElementById("customerPhone").value.trim();
+      const invoiceNumber = document.getElementById("invoiceNumber").value.trim();
+      const comment = document.getElementById("comment").value.trim();
+
+      const payload = {
+        customerName,
+        customerPhone,
+        invoiceNumber: invoiceNumber || null,
+        rating: currentRating,
+        comment,
+        channel: "online_review",
+        timestamp: new Date().toISOString()
+      };
+
+      let submittedSuccessfully = false;
+
+      // 1. Try local/same-origin API first (if hosted on the same server)
+      try {
+        const localRes = await fetch("/api/feedback", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        if (localRes.ok) {
+          submittedSuccessfully = true;
+        }
+      } catch (err) {
+        // Not on same origin, proceed to GitHub API
+      }
+
+      // 2. If not submitted and GitHub repo is configured, submit via GitHub Issues API
+      if (!submittedSuccessfully && CONFIG.repo) {
+        try {
+          const cleanRepo = CONFIG.repo.replace(/^https?:\/\/github\.com\//, "").replace(/\/$/, "");
+          const issueBody = [
+            `### تقييم عميل جديد من منصة المراجعات 🌿`,
+            ``,
+            `- **الاسم:** ${customerName}`,
+            `- **الهاتف:** ${customerPhone}`,
+            `- **التقييم:** ${currentRating} / 5 ⭐`,
+            invoiceNumber ? `- **رقم الفاتورة:** ${invoiceNumber}` : "",
+            `- **تاريخ الإرسال:** ${new Date().toLocaleString("ar-EG")}`,
+            ``,
+            `#### الملاحظات / التعليق:`,
+            comment || "لا يوجد تعليق نصي إضافي.",
+            ``,
+            `\`\`\`json`,
+            JSON.stringify(payload, null, 2),
+            `\`\`\``
+          ].filter(Boolean).join("\n");
+
+          const ghHeaders = {
+            "Accept": "application/vnd.github.v3+json",
+            "Content-Type": "application/json"
+          };
+          if (CONFIG.token) {
+            ghHeaders["Authorization"] = `Bearer ${CONFIG.token}`;
+          }
+
+          const ghRes = await fetch(`https://api.github.com/repos/${cleanRepo}/issues`, {
+            method: "POST",
+            headers: ghHeaders,
+            body: JSON.stringify({
+              title: `تقييم من: ${customerName} (${currentRating}★)`,
+              body: issueBody,
+              labels: ["customer-review", `rating-${currentRating}`]
+            })
+          });
+
+          if (ghRes.ok) {
+            submittedSuccessfully = true;
+          }
+        } catch (ghErr) {
+          console.error("GitHub issue creation failed:", ghErr);
+        }
+      }
+
+      // 3. Fallback: If submission is successful or even if offline, save locally & show success
+      // Save in local storage history
+      try {
+        const history = JSON.parse(localStorage.getItem("plantn_local_reviews") || "[]");
+        history.push(payload);
+        localStorage.setItem("plantn_local_reviews", JSON.stringify(history));
+      } catch (e) {}
+
+      // Show Success Screen with Celebration
+      document.getElementById("reviewForm").style.display = "none";
+      positiveBanner.style.display = "none";
+      negativeBanner.style.display = "none";
+      document.querySelector(".rating-section").style.display = "none";
+      document.getElementById("successScreen").style.display = "block";
+
+      if (typeof confetti === "function") {
+        confetti({
+          particleCount: 100,
+          spread: 80,
+          origin: { y: 0.5 }
+        });
+      }
+    }
+
+    // Config Modal Helpers
+    function openConfigModal() {
+      document.getElementById("cfgRepo").value = CONFIG.repo;
+      document.getElementById("cfgToken").value = CONFIG.token;
+      document.getElementById("cfgMapsUrl").value = CONFIG.mapsUrl;
+      document.getElementById("configModal").style.display = "flex";
+    }
+
+    function closeConfigModal() {
+      document.getElementById("configModal").style.display = "none";
+    }
+
+    function saveConfig() {
+      const repo = document.getElementById("cfgRepo").value.trim();
+      const token = document.getElementById("cfgToken").value.trim();
+      const mapsUrl = document.getElementById("cfgMapsUrl").value.trim();
+
+      CONFIG.repo = repo;
+      CONFIG.token = token;
+      CONFIG.mapsUrl = mapsUrl;
+
+      localStorage.setItem("plantn_review_config", JSON.stringify(CONFIG));
+      if (mapsUrl) mapsLink.href = mapsUrl;
+
+      closeConfigModal();
+      alert("تم حفظ الإعدادات بنجاح في المتصفح! 🌿");
+    }
+  </script>
+</body>
+</html>
